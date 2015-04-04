@@ -21,37 +21,77 @@
 
 #include "tests.h"
 
-#include "core/CsvExporter.h"
 #include "core/Database.h"
 #include "core/Entry.h"
 #include "core/Group.h"
-#include "core/test/DeviceWrapperMock.h"
+#include "core/CsvExporter.h"
+
 #include "crypto/Crypto.h"
 
 QTEST_GUILESS_MAIN(TestCsvExporter)
 
-void TestCsvExporter::test()
+const QString TestCsvExporter::ExpectedHeaderLine = QString("\"Group\",\"Title\",\"Username\",\"Password\",\"URL\",\"Notes\"\n");
+
+void TestCsvExporter::init()
+{
+    m_db = new Database();
+    m_deviceWrapperMock = new DeviceWrapperMock();
+    m_csvExporter = new CsvExporter();
+}
+
+void TestCsvExporter::initTestCase()
 {
     Crypto::init();
-    Database* db = new Database();
+}
 
+void TestCsvExporter::cleanUp()
+{
+    delete m_db;
+    delete m_csvExporter;
+    delete m_deviceWrapperMock;
+}
 
-    Group* groupRoot = db->rootGroup();
+void TestCsvExporter::testExport()
+{
+    Group* groupRoot = m_db->rootGroup();
     Group* group= new Group();
     group->setName("Test Group Name");
     group->setParent(groupRoot);
     Entry* entry = new Entry();
     entry->setGroup(group);
     entry->setTitle("Test Entry Title");
+    entry->setUsername("Test Username");
+    entry->setPassword("Test Password");
+    entry->setUrl("http://test.url");
+    entry->setNotes("Test Notes");
 
-    CsvExporter csvExporter;
-    DeviceWrapperMock* mock = new DeviceWrapperMock();
-    csvExporter.exportDatabase(mock, db);
+    m_csvExporter->exportDatabase(m_deviceWrapperMock, m_db);
 
-    QString expectedResult = QString().append("\"Group\",\"Title\",\"Username\",\"Password\",\"URL\"\n")
-            .append("\"Test Group Name\",\"Test Entry Title\",\"\",\"\",\"\"\n");
+    QString expectedResult = QString().append(ExpectedHeaderLine).append("\"Test Group Name\",\"Test Entry Title\",\"Test Username\",\"Test Password\",\"http://test.url\",\"Test Notes\"\n");
 
-    QCOMPARE(mock->getResult(), expectedResult);
+    QCOMPARE(m_deviceWrapperMock->getResult(), expectedResult);
+}
 
+void TestCsvExporter::testEmptyDatabase()
+{
+    m_csvExporter->exportDatabase(m_deviceWrapperMock, m_db);
+    QCOMPARE(m_deviceWrapperMock->getResult(), ExpectedHeaderLine);
+}
 
+void TestCsvExporter::testNestedGroups()
+{
+    Group* groupRoot = m_db->rootGroup();
+    Group* group= new Group();
+    group->setName("Test Group Name");
+    group->setParent(groupRoot);
+    Group* childGroup= new Group();
+    childGroup->setName("Test Sub Group Name");
+    childGroup->setParent(group);
+    Entry* entry = new Entry();
+    entry->setGroup(childGroup);
+    entry->setTitle("Test Entry Title");
+
+    m_csvExporter->exportDatabase(m_deviceWrapperMock, m_db);
+
+    QCOMPARE(m_deviceWrapperMock->getResult(), QString().append(ExpectedHeaderLine).append("\"Test Group Name/Test Sub Group Name\",\"Test Entry Title\",\"\",\"\",\"\",\"\"\n"));
 }

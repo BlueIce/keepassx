@@ -20,12 +20,30 @@
 
 #include <QObject>
 
+#include "core/test/DeviceWrapperMock.h"
+
+class Database;
+class CsvExporter;
+
 class TestCsvExporter : public QObject
 {
     Q_OBJECT
 
+public:
+    static const QString ExpectedHeaderLine;
+
 private Q_SLOTS:
-   void test();
+    void init();
+    void initTestCase();
+    void cleanUp();
+    void testExport();
+    void testEmptyDatabase();
+    void testNestedGroups();
+
+private:
+    Database* m_db;
+    CsvExporter* m_csvExporter;
+    DeviceWrapperMock* m_deviceWrapperMock;
 
 };
 

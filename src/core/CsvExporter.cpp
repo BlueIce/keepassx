@@ -43,6 +43,7 @@ bool CsvExporter::exportDatabase(DeviceWrapper* device, const Database* db)
     addColumn(header, "Username");
     addColumn(header, "Password");
     addColumn(header, "URL");
+    addColumn(header, "Notes");
     header.append("\n");
 
     if (device->write(header) == -1) {
@@ -73,6 +74,7 @@ bool CsvExporter::writeGroup(DeviceWrapper* device, const Group* group, QString 
         addColumn(line, entry->username());
         addColumn(line, entry->password());
         addColumn(line, entry->url());
+        addColumn(line, entry->notes());
 
         line.append("\n");
 
