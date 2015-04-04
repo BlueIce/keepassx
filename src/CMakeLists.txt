@@ -29,14 +29,17 @@ set(keepassx_SOURCES
     autotype/test/AutoTypeTestInterface.h
     core/AutoTypeAssociations.cpp
     core/Config.cpp
+    core/CsvExporter.cpp
     core/Database.cpp
     core/DatabaseIcons.cpp
+    core/DeviceWrapper.h
     core/Endian.cpp
     core/Entry.cpp
     core/EntryAttachments.cpp
     core/EntryAttributes.cpp
     core/EntrySearcher.cpp
     core/FilePath.cpp
+    core/FileDeviceWrapper.cpp
     core/Global.h
     core/Group.cpp
     core/InactivityTimer.cpp
@@ -54,6 +57,7 @@ set(keepassx_SOURCES
     core/Uuid.cpp
     core/qcommandlineoption.cpp
     core/qcommandlineparser.cpp
+    core/test/DeviceWrapperMock.cpp
     crypto/Crypto.cpp
     crypto/CryptoHash.cpp
     crypto/Random.cpp
