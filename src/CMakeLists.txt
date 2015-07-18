@@ -26,7 +26,7 @@ if (NOT GIT_HEAD OR NOT GIT_DESCRIBE)
     set(GIT_DESCRIBE "")
 endif()
 
-configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
+configure_file(version.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
 
 set(keepassx_SOURCES
     autotype/AutoType.cpp
