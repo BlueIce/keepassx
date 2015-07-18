@@ -19,7 +19,7 @@
 #include "ui_AboutDialog.h"
 
 #include "config-keepassx.h"
-#include "../version.h"
+#include "version.h"
 #include "core/FilePath.h"
 
 AboutDialog::AboutDialog(QWidget* parent)

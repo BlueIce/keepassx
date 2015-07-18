@@ -1,1 +1,1 @@
-version.h.in export-subst
+src/version.h.in export-subst
